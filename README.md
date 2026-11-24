@@ -1,126 +1,126 @@
 <p align="center">
-  <img src="assets/banner.png" alt="ios-inspect: Debug Safari iPhone langsung dari Linux" width="100%">
+  <img src="assets/banner.png" alt="ios-inspect: Debug Safari on iPhone, right from Linux" width="100%">
 </p>
 
 # ios-inspect-linux
 
-Debug website di **Safari iPhone** dan **WKWebView** langsung dari **Linux**, tanpa Mac.
-Tampilannya Chrome DevTools biasa: Console, Network, Elements, Sources.
+Debug websites in **Safari on iPhone** and in **WKWebView** straight from **Linux**, no Mac required.
+You get the familiar Chrome DevTools: Console, Network, Elements, Sources.
 
 ```
-iPhone (Safari)  ──USB──▶  ios-inspect  ──▶  Chrome DevTools di Linux
+iPhone (Safari)  ──USB──▶  ios-inspect  ──▶  Chrome DevTools on Linux
 ```
 
-> Biasanya Web Inspector untuk iOS hanya ada di Safari macOS. `ios-inspect` memakai
-> [pymobiledevice3](https://github.com/doronz88/pymobiledevice3) untuk terhubung ke layanan
-> Web Inspector di iPhone lewat USB, lalu menampilkannya di Chrome/Chromium.
+> Apple ships the iOS Web Inspector only inside Safari on macOS. `ios-inspect` uses
+> [pymobiledevice3](https://github.com/doronz88/pymobiledevice3) to reach the Web Inspector
+> service on the iPhone over USB and shows it in Chrome/Chromium.
 
-## Fitur
+## Features
 
-- **Console**: lihat `console.log` / error dari iPhone, jalankan JavaScript langsung di halaman.
-- **Network**: request, response, header, status, timing.
-- **Elements**: inspect DOM dan ubah CSS secara live.
-- **Sources**: lihat file JS dan pasang breakpoint.
-- **Satu perintah**: menunggu iPhone, menjalankan bridge, dan membuka browser otomatis.
-- **Sambung ulang otomatis**: kalau kabel tercabut, cukup colok lagi.
-- **`ios-inspect doctor`**: cek setup dan beri tahu apa yang perlu diperbaiki.
+- **Console**: see `console.log` output and errors from the iPhone, run JavaScript in the page.
+- **Network**: requests, responses, headers, status codes, timing.
+- **Elements**: inspect the DOM and edit CSS live.
+- **Sources**: browse JS files and set breakpoints.
+- **One command**: waits for the iPhone, starts the bridge, and opens the browser for you.
+- **Auto-reconnect**: if the cable comes loose, just plug it back in.
+- **`ios-inspect doctor`**: checks your setup and tells you what to fix.
 
-Sudah dicoba di iPhone XR dengan iOS 18.7, Pop!_OS (Ubuntu 24.04), dan Python 3.12.
+Tested on an iPhone XR running iOS 18.7, Pop!_OS (Ubuntu 24.04), and Python 3.12.
 
-## Kebutuhan
+## Requirements
 
-| Kebutuhan | Keterangan |
+| Requirement | Notes |
 |---|---|
-| Linux | Diuji di Ubuntu/Pop!_OS; distro lain yang punya `usbmuxd` seharusnya bisa |
+| Linux | Tested on Ubuntu/Pop!_OS; any distro with `usbmuxd` should work |
 | Python 3.9+ | |
-| `usbmuxd` | Daemon USB untuk iPhone (`sudo apt install usbmuxd`) |
-| Chrome / Chromium | Untuk menampilkan DevTools |
-| iPhone + kabel data | Kabel yang hanya untuk charging tidak bisa dipakai |
-| Internet | UI DevTools diambil dari internet saat dibuka |
+| `usbmuxd` | USB daemon for iOS devices (`sudo apt install usbmuxd`) |
+| Chrome / Chromium | Displays DevTools |
+| iPhone + data cable | Charge-only cables will not work |
+| Internet access | The DevTools UI is downloaded when it opens |
 
-## Instalasi
+## Installation
 
 ```bash
-# 1. Pasang usbmuxd
+# 1. Install usbmuxd
 sudo apt install usbmuxd
 
-# 2. Pasang ios-inspect di virtualenv
+# 2. Install ios-inspect into a virtualenv
 python3 -m venv ~/.venvs/ios-inspect
 ~/.venvs/ios-inspect/bin/pip install git+https://github.com/raisulkhairi/ios-inspect-linux.git
 
-# 3. (Opsional) supaya bisa dipanggil cukup dengan `ios-inspect`
+# 3. (Optional) make `ios-inspect` available on your PATH
 mkdir -p ~/.local/bin
 ln -s ~/.venvs/ios-inspect/bin/ios-inspect ~/.local/bin/ios-inspect
 ```
 
-Atau dengan [pipx](https://pipx.pypa.io/):
+Or with [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install git+https://github.com/raisulkhairi/ios-inspect-linux.git
 ```
 
-## Persiapan iPhone (sekali saja)
+## iPhone setup (one time)
 
-1. Buka **Settings → Apps → Safari → Advanced**, aktifkan **Web Inspector**.
-   (iOS 17 ke bawah: **Settings → Safari → Advanced → Web Inspector**.)
-2. Colok iPhone ke laptop, buka kuncinya, lalu tap **Trust** saat muncul *"Trust This Computer?"*.
+1. Go to **Settings → Apps → Safari → Advanced** and turn on **Web Inspector**.
+   (iOS 17 and earlier: **Settings → Safari → Advanced → Web Inspector**.)
+2. Plug the iPhone into your computer, unlock it, and tap **Trust** when *"Trust This Computer?"* appears.
 
-## Cara pakai
+## Usage
 
 ```bash
 ios-inspect
 ```
 
-Lalu:
+Then:
 
-1. Buka website yang mau di-debug di **Safari iPhone**.
-2. Browser terbuka otomatis di `http://127.0.0.1:9222/` dan menampilkan daftar halaman.
-3. **Klik judul halaman** (teks biru). DevTools akan terbuka.
-4. Selesai: tekan `Ctrl+C` di terminal.
+1. Open the website you want to debug in **Safari on the iPhone**.
+2. Your browser opens `http://127.0.0.1:9222/` automatically and lists the inspectable pages.
+3. **Click the page title** (the blue link). DevTools opens.
+4. When you are done, press `Ctrl+C` in the terminal.
 
-Contoh output:
+Example output:
 
 ```
-Terhubung: iPhone (iPhone11,8, iOS 18.7.12, USB)
-Web Inspector siap: http://127.0.0.1:9222/  (1 halaman bisa di-inspect)
-Klik judul halaman untuk membuka DevTools. Ctrl+C untuk berhenti.
+Connected: iPhone (iPhone11,8, iOS 18.7.12, USB)
+Web Inspector ready: http://127.0.0.1:9222/  (1 inspectable page)
+Click a page title to open DevTools. Press Ctrl+C to stop.
 ```
 
-> **Tips:** di tab **Network**, refresh halaman di iPhone setelah DevTools terbuka
-> supaya semua request dari awal ikut tertangkap.
+> **Tip:** in the **Network** tab, reload the page on the iPhone after DevTools opens
+> so that every request from the start is captured.
 
-### Perintah lain
+### Commands
 
-| Perintah | Fungsi |
+| Command | What it does |
 |---|---|
-| `ios-inspect` | Jalankan Web Inspector (sama dengan `ios-inspect start`) |
-| `ios-inspect doctor` | Cek usbmuxd, iPhone, Web Inspector, dan browser |
-| `ios-inspect pages` | Tampilkan tab Safari yang bisa di-inspect |
-| `ios-inspect devices` | Tampilkan iPhone yang tercolok |
+| `ios-inspect` | Start the Web Inspector (same as `ios-inspect start`) |
+| `ios-inspect doctor` | Check usbmuxd, the iPhone, Web Inspector, and the browser |
+| `ios-inspect pages` | List Safari tabs that can be inspected |
+| `ios-inspect devices` | List connected iPhones |
 
-### Opsi `start`
+### `start` options
 
-| Opsi | Fungsi |
+| Option | What it does |
 |---|---|
-| `--port 9333` | Ganti port (default `9222`) |
-| `--no-browser` | Jangan buka browser otomatis |
-| `--no-reconnect` | Keluar saat iPhone terputus |
-| `--pause-new-targets` | Hentikan tiap JSContext baru di statement pertamanya |
-| `-v`, `--verbose` | Tampilkan log bridge (untuk melacak masalah) |
-| `--udid <UDID>` | Pilih iPhone tertentu jika lebih dari satu (taruh sebelum subcommand) |
-| `--browser <nama>` | Pakai browser tertentu, misalnya `--browser chromium` |
+| `--port 9333` | Use another port (default `9222`) |
+| `--no-browser` | Do not open the browser automatically |
+| `--no-reconnect` | Exit when the iPhone disconnects |
+| `--pause-new-targets` | Pause every new JSContext on its first statement |
+| `-v`, `--verbose` | Show bridge logs (for troubleshooting) |
+| `--udid <UDID>` | Pick a specific iPhone when several are connected (put it before the subcommand) |
+| `--browser <name>` | Use a specific browser, e.g. `--browser chromium` |
 
-### Debug aplikasi (WKWebView)
+### Debugging apps (WKWebView)
 
-Halaman WKWebView di aplikasi iOS bisa di-inspect kalau aplikasinya mengaktifkan:
+WKWebView pages inside an iOS app can be inspected when the app enables:
 
 ```swift
 webView.isInspectable = true   // iOS 16.4+
 ```
 
-### Pakai dari VS Code
+### Using it from VS Code
 
-Jalankan `ios-inspect --no-browser`, lalu tambahkan ke `.vscode/launch.json`:
+Run `ios-inspect --no-browser`, then add this to `.vscode/launch.json`:
 
 ```json
 {
@@ -136,111 +136,112 @@ Jalankan `ios-inspect --no-browser`, lalu tambahkan ke `.vscode/launch.json`:
 
 ## Troubleshooting
 
-Jalankan `ios-inspect doctor` dulu. Masalah yang umum:
+Run `ios-inspect doctor` first. Common problems:
 
-| Gejala | Solusi |
+| Symptom | Fix |
 |---|---|
-| `Menunggu iPhone dicolok...` terus | Colok ulang atau ganti port/kabel, buka kunci iPhone, tap **Trust**. Cek dengan `lsusb \| grep -i apple`. |
-| Daftar halaman kosong | Pastikan Web Inspector aktif, buka website di Safari, iPhone tidak terkunci, lalu refresh daftar. |
-| `iPhone terputus` | Kabel sempat lepas. Colok lagi; `ios-inspect` menyambung otomatis. |
-| DevTools tampil putih | Periksa koneksi internet (UI DevTools diunduh saat dibuka). |
-| Console macet saat log sangat banyak | Buka DevTools dari `http://127.0.0.1:9222/`, bukan dari `chrome://inspect`. |
-| Halaman ditandai *held elsewhere*, Console/Network kosong | Halaman sedang di-debug di tempat lain (Safari Mac, atau `ios-inspect` kedua). Tutup debugger itu dulu. |
-| Port 9222 sudah dipakai | `ios-inspect start --port 9333` |
+| Stuck on `Waiting for an iPhone...` | Re-plug or try another port/cable, unlock the iPhone, tap **Trust**. Check with `lsusb \| grep -i apple`. |
+| The page list is empty | Make sure Web Inspector is on, a website is open in Safari, and the iPhone is unlocked, then refresh the list. |
+| `iPhone disconnected` | The cable came loose. Plug it back in; `ios-inspect` reconnects on its own. |
+| DevTools shows a blank page | Check your internet connection (the DevTools UI is downloaded when it opens). |
+| Console freezes under heavy logging | Open DevTools from `http://127.0.0.1:9222/`, not from `chrome://inspect`. |
+| Page marked *held elsewhere*, Console/Network stay empty | The page is being debugged somewhere else (Safari on a Mac, or a second `ios-inspect`). Close that debugger first. |
+| Port 9222 is already in use | `ios-inspect start --port 9333` |
 
-## Keterbatasan
+## Limitations
 
-- iOS Simulator tidak bisa (butuh Xcode/macOS).
-- Hanya mendukung koneksi USB; debug lewat Wi-Fi belum diuji.
-- Apple bisa mengubah protokol Web Inspector di versi iOS baru. Kalau ada yang rusak,
-  coba perbarui pymobiledevice3: `pip install -U pymobiledevice3`.
+- The iOS Simulator is not supported (it needs Xcode/macOS).
+- USB only; debugging over Wi-Fi has not been tested.
+- Apple may change the Web Inspector protocol in new iOS releases. If something breaks,
+  try updating pymobiledevice3: `pip install -U pymobiledevice3`.
 
-## Cara kerja
+## How it works
 
-`ios-inspect` sendiri hanya launcher. Pekerjaan berat (bicara dengan iPhone dan menerjemahkan
-protokol) dilakukan [pymobiledevice3](https://github.com/doronz88/pymobiledevice3).
+`ios-inspect` itself is only a launcher. The heavy lifting (talking to the iPhone and translating
+the protocol) is done by [pymobiledevice3](https://github.com/doronz88/pymobiledevice3).
 
 ```
-┌─ iPhone ───────────────┐     ┌─ Laptop Linux ───────────────────────────────────┐
+┌─ iPhone ───────────────┐     ┌─ Linux machine ──────────────────────────────────┐
 │ Safari / WKWebView     │     │                                                  │
 │        │               │     │  usbmuxd     pymobiledevice3         Chromium    │
-│ webinspectord ◀────────┼─USB─┼─▶ (jalur ─▶  webinspector cdp  ◀──▶  DevTools    │
-│ (layanan Web Inspector)│     │    USB)      • bicara ke iPhone      (Console,   │
-└────────────────────────┘     │              • terjemah protokol     Network…)   │
-                               │              • server :9222                      │
+│ webinspectord ◀────────┼─USB─┼─▶ (USB  ──▶  webinspector cdp  ◀──▶  DevTools    │
+│ (Web Inspector service)│     │    link)     • talks to the iPhone   (Console,   │
+└────────────────────────┘     │              • translates protocol   Network…)   │
+                               │              • serves :9222                      │
                                │        ▲                                         │
-                               │  ios-inspect: menjalankan, memantau, membuka     │
-                               │               browser, menyambung ulang          │
+                               │  ios-inspect: starts, watches, opens the         │
+                               │               browser, reconnects                │
                                └──────────────────────────────────────────────────┘
 ```
 
-### Empat lapisan
+### Four layers
 
-1. **iPhone: `webinspectord`.** Layanan bawaan iOS yang juga dipakai Safari di Mac. Hanya aktif
-   kalau **Web Inspector** dinyalakan di Settings. Ia mencatat semua halaman Safari dan WKWebView
-   yang boleh di-inspect.
-2. **Jalur USB: `usbmuxd`.** Daemon Linux yang membuka jalur komunikasi ke iPhone lewat kabel.
-   Setelah pairing (tap **Trust**), laptop boleh membuka layanan di iPhone, termasuk Web Inspector.
-3. **Penerjemah: `pymobiledevice3 webinspector cdp`.** Inti sistemnya:
-   - membuka layanan Web Inspector, meminta daftar aplikasi dan halaman, lalu menyambung ke halaman
-     yang dipilih;
-   - menerjemahkan dua arah antara **WebKit Inspector Protocol** (bahasa iPhone) dan
-     **Chrome DevTools Protocol / CDP** (bahasa Chrome DevTools);
-   - membuka server di `127.0.0.1:9222`:
+1. **iPhone: `webinspectord`.** The built-in iOS service that Safari on a Mac also talks to. It is
+   active only when **Web Inspector** is enabled in Settings, and it tracks every Safari and
+   WKWebView page that may be inspected.
+2. **USB link: `usbmuxd`.** The Linux daemon that opens a channel to the iPhone over the cable.
+   After pairing (tapping **Trust**), the computer may open services on the iPhone, including
+   Web Inspector.
+3. **Translator: `pymobiledevice3 webinspector cdp`.** The core of the system. It:
+   - opens the Web Inspector service, asks for the list of apps and pages, and connects to the
+     page you pick;
+   - translates in both directions between the **WebKit Inspector Protocol** (what the iPhone
+     speaks) and the **Chrome DevTools Protocol / CDP** (what Chrome DevTools speaks);
+   - serves `127.0.0.1:9222`:
 
-     | Endpoint | Isi |
+     | Endpoint | Contents |
      |---|---|
-     | `/` | Halaman daftar tab |
-     | `/json` | Daftar target untuk Chrome, VS Code, Playwright, dll. |
-     | `ws://…/devtools/page/<id>` | WebSocket per halaman, jalur pesan DevTools |
-     | `/devtools/inspector.html` | UI DevTools (diambil dari internet) |
-4. **Tampilan: Chrome DevTools.** DevTools biasa. Baginya `127.0.0.1:9222` terlihat seperti
-   Chrome lain, jadi tidak perlu tahu bahwa di ujungnya ada iPhone.
+     | `/` | Page list |
+     | `/json` | Target list for Chrome, VS Code, Playwright, etc. |
+     | `ws://…/devtools/page/<id>` | Per-page WebSocket that carries DevTools messages |
+     | `/devtools/inspector.html` | The DevTools UI (downloaded from the internet) |
+4. **Display: Chrome DevTools.** Plain DevTools. To it, `127.0.0.1:9222` looks like any other
+   Chrome, so it never needs to know there is an iPhone on the other end.
 
-### Contoh alur: satu `console.log`
-
-```
-iPhone: halaman menjalankan console.log("halo")
-  → webinspectord mengirim event (protokol WebKit) lewat USB
-  → usbmuxd meneruskan ke pymobiledevice3
-  → diterjemahkan jadi event CDP "Runtime.consoleAPICalled"
-  → dikirim lewat WebSocket ke DevTools
-  → muncul "halo" di tab Console
-```
-
-Arah sebaliknya juga berlaku: perintah yang diketik di Console (misalnya `document.title`)
-diterjemahkan, dijalankan di iPhone, dan hasilnya dikirim balik. Tab Network, Elements, dan
-Sources bekerja dengan cara yang sama.
-
-### Tugas `ios-inspect`
-
-Kode di [`src/ios_inspect/cli.py`](src/ios_inspect/cli.py):
+### Example flow: one `console.log`
 
 ```
-mulai
-  └─▶ tunggu iPhone muncul di usbmuxd (cek tiap 2 detik)
-        └─▶ jalankan "pymobiledevice3 webinspector cdp" sebagai proses anak
-              └─▶ tunggu server :9222 siap (cek /json/version)
-                    └─▶ buka Chromium ke http://127.0.0.1:9222/ (sekali saja)
-                          └─▶ tunggu bridge berhenti
-                                ├─ iPhone terputus          → kembali ke "tunggu iPhone"
-                                ├─ error, iPhone masih ada  → coba lagi setelah 5 detik
-                                └─ Ctrl+C                   → matikan bridge, keluar
+iPhone: the page runs console.log("hello")
+  → webinspectord sends an event (WebKit protocol) over USB
+  → usbmuxd forwards it to pymobiledevice3
+  → it is translated into the CDP event "Runtime.consoleAPICalled"
+  → sent over the WebSocket to DevTools
+  → "hello" appears in the Console tab
 ```
 
-- `doctor` mengecek pymobiledevice3, usbmuxd, iPhone, respons Web Inspector, dan browser
-  satu per satu.
-- `pages` dan `devices` menampilkan data dari pymobiledevice3.
+It works the other way too: a command typed into the Console (for example `document.title`) is
+translated, run on the iPhone, and the result is sent back. The Network, Elements, and Sources
+tabs work the same way.
 
-### Konsekuensi desain
+### What `ios-inspect` does
 
-- **Satu halaman, satu debugger.** Halaman yang sedang dipegang debugger lain (Safari Mac atau
-  bridge kedua) ditandai *held elsewhere* dan tidak mengirim event ke DevTools kita.
-- **Bergantung pada pymobiledevice3.** Kalau Apple mengubah protokol di iOS baru, yang perlu
-  diperbarui adalah pymobiledevice3, bukan `ios-inspect`.
-- **UI DevTools diambil dari internet**, jadi tanpa internet tampilannya bisa kosong.
+Code in [`src/ios_inspect/cli.py`](src/ios_inspect/cli.py):
 
-## Lisensi
+```
+start
+  └─▶ wait for the iPhone to appear in usbmuxd (polls every 2 seconds)
+        └─▶ run "pymobiledevice3 webinspector cdp" as a child process
+              └─▶ wait for the :9222 server to be ready (polls /json/version)
+                    └─▶ open Chromium at http://127.0.0.1:9222/ (once)
+                          └─▶ wait for the bridge to exit
+                                ├─ iPhone disconnected        → back to "wait for the iPhone"
+                                ├─ error, iPhone still there  → retry after 5 seconds
+                                └─ Ctrl+C                     → stop the bridge and exit
+```
 
-[GPL-3.0-or-later](LICENSE). Proyek ini memakai
+- `doctor` checks pymobiledevice3, usbmuxd, the iPhone, the Web Inspector response, and the
+  browser, one by one.
+- `pages` and `devices` print data from pymobiledevice3.
+
+### Design consequences
+
+- **One page, one debugger.** A page already held by another debugger (Safari on a Mac, or a
+  second bridge) is marked *held elsewhere* and sends no events to our DevTools.
+- **Depends on pymobiledevice3.** If Apple changes the protocol in a new iOS release, it is
+  pymobiledevice3 that needs updating, not `ios-inspect`.
+- **The DevTools UI comes from the internet**, so without a connection it may show a blank page.
+
+## License
+
+[GPL-3.0-or-later](LICENSE). This project uses
 [pymobiledevice3](https://github.com/doronz88/pymobiledevice3) (GPL-3.0).
