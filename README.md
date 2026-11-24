@@ -100,6 +100,8 @@ Click a page title to open DevTools. Press Ctrl+C to stop.
 
 ### `start` options
 
+`start` is the default command, so these also work without it, e.g. `ios-inspect --no-browser`.
+
 | Option | What it does |
 |---|---|
 | `--port 9333` | Use another port (default `9222`) |
@@ -147,7 +149,7 @@ Run `ios-inspect doctor` first. Common problems:
 | DevTools shows a blank page | Check your internet connection (the DevTools UI is downloaded when it opens). |
 | Console freezes under heavy logging | Open DevTools from `http://127.0.0.1:9222/`, not from `chrome://inspect`. |
 | Page marked *held elsewhere*, Console/Network stay empty | The page is being debugged somewhere else (Safari on a Mac, or a second `ios-inspect`). Close that debugger first. |
-| Port 9222 is already in use | `ios-inspect start --port 9333` |
+| `Port 9222 is already in use` | Another `ios-inspect` (or a Chrome with remote debugging) holds the port. Stop it, or run `ios-inspect --port 9333`. |
 
 ## Limitations
 

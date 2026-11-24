@@ -12,6 +12,7 @@ import json
 import os
 import shutil
 import signal
+import socket
 import subprocess
 import sys
 import time
@@ -89,6 +90,14 @@ def open_browser(browser: str | None, url: str) -> None:
     )
 
 
+def port_in_use(host: str, port: int) -> bool:
+    try:
+        with socket.create_connection((host, port), timeout=1):
+            return True
+    except OSError:
+        return False
+
+
 def describe(dev: dict) -> str:
     return (
         f"{dev.get('DeviceName', 'iPhone')} ({dev.get('ProductType', '?')}, "
@@ -115,6 +124,14 @@ def cmd_start(args: argparse.Namespace) -> int:
     signal.signal(signal.SIGTERM, stop)
 
     while True:
+        # Checked before every launch: otherwise the bridge fails to bind and the old
+        # server answering on the port would be reported as ready.
+        if port_in_use(args.host, args.port):
+            print(f"Port {args.port} is already in use (another ios-inspect, or Chrome with "
+                  f"remote debugging?). Stop it, or pick another port: ios-inspect --port {args.port + 111}",
+                  file=sys.stderr, flush=True)
+            return 1
+
         dev = wait_for_device(args.udid)
         print(f"Connected: {describe(dev)}", flush=True)
 
@@ -255,10 +272,21 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("pages", help="List inspectable Safari tabs / WebViews")
     sub.add_parser("devices", help="List connected iPhones")
 
+    argv = list(argv if argv is not None else sys.argv[1:])
+    # `start` is the default subcommand, so `ios-inspect --no-browser` means `ios-inspect start --no-browser`.
+    i = 0
+    while i < len(argv):
+        if argv[i] in ("--udid", "--browser"):
+            i += 2
+        elif argv[i].startswith(("--udid=", "--browser=")):
+            i += 1
+        else:
+            break
+    if i >= len(argv) or argv[i] not in (*sub.choices, "-h", "--help", "--version"):
+        argv.insert(min(i, len(argv)), "start")
+
     args = parser.parse_args(argv)
-    if args.command in (None, "start"):
-        if args.command is None:
-            args = parser.parse_args([*(argv if argv is not None else sys.argv[1:]), "start"])
+    if args.command == "start":
         return cmd_start(args)
     return {"doctor": cmd_doctor, "pages": cmd_pages, "devices": cmd_devices}[args.command](args)
 
