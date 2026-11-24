@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="ios-inspect: Debug Safari iPhone langsung dari Linux" width="100%">
+</p>
+
 # ios-inspect-linux
 
 Debug website di **Safari iPhone** dan **WKWebView** langsung dari **Linux**, tanpa Mac.
