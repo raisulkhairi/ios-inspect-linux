@@ -141,6 +141,7 @@ Run `ios-inspect doctor` first. Common problems:
 | Symptom | Fix |
 |---|---|
 | Stuck on `Waiting for an iPhone...` | Re-plug or try another port/cable, unlock the iPhone, tap **Trust**. Check with `lsusb \| grep -i apple`. |
+| Stuck on `Bridge is still starting...` | Unlock the iPhone and keep Safari open. If it persists, stop and rerun with `--verbose` to see the bridge log. |
 | The page list is empty | Make sure Web Inspector is on, a website is open in Safari, and the iPhone is unlocked, then refresh the list. |
 | `iPhone disconnected` | The cable came loose. Plug it back in; `ios-inspect` reconnects on its own. |
 | DevTools shows a blank page | Check your internet connection (the DevTools UI is downloaded when it opens). |

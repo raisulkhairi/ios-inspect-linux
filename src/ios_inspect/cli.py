@@ -127,14 +127,26 @@ def cmd_start(args: argparse.Namespace) -> int:
         log = None if args.verbose else subprocess.DEVNULL
         proc = subprocess.Popen(cmd, stdout=log, stderr=log)
 
-        deadline = time.time() + 30
-        while time.time() < deadline and proc.poll() is None:
+        started = time.time()
+        warned = False
+        ready = False
+        while proc.poll() is None:
             if get_json(f"{base}/json/version"):
+                ready = True
                 break
+            if not warned and time.time() - started > 30:
+                print("Bridge is still starting... (unlock the iPhone; run with --verbose "
+                      "if this persists)", flush=True)
+                warned = True
             time.sleep(0.5)
 
-        if proc.poll() is None:
+        if ready and proc.poll() is None:
+            # The bridge serves /json before it has fetched the page list from the device.
+            list_deadline = time.time() + 5
             pages = get_json(f"{base}/json") or []
+            while not pages and time.time() < list_deadline and proc.poll() is None:
+                time.sleep(0.5)
+                pages = get_json(f"{base}/json") or []
             print(f"Web Inspector ready: {base}/  ({len(pages)} inspectable page{'' if len(pages) == 1 else 's'})")
             if not pages:
                 print("  No pages yet. Open a website in Safari on the iPhone, then refresh the list.")
