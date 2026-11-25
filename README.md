@@ -14,6 +14,8 @@ iPhone (Safari)  ──USB──▶  ios-inspect  ──▶  Chrome DevTools on 
 > Apple ships the iOS Web Inspector only inside Safari on macOS. `ios-inspect` uses
 > [pymobiledevice3](https://github.com/doronz88/pymobiledevice3) to reach the Web Inspector
 > service on the iPhone over USB and shows it in Chrome/Chromium.
+>
+> On Windows? Use [ios-inspect-windows](https://github.com/raisulkhairi/ios-inspect-windows).
 
 ## Features
 
